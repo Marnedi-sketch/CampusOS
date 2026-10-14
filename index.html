@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>CampusOS | Modern Student Companion</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <a href="#" class="brand" data-page-target="dashboard">
+        <span class="brand-icon">
+          <i data-lucide="compass"></i>
+        </span>
+        <span>Campus<span class="accent">OS</span></span>
+      </a>
+
+      <p class="nav-label">WORKSPACE</p>
+      <nav id="navigation">
+        <button class="nav-item active" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="tasks">
+          <i data-lucide="check-square"></i>
+          <span>Study Planner</span>
+          <span class="nav-badge" id="nav-tasks-badge">0</span>
+        </button>
+        <button class="nav-item" data-page="events">
+          <i data-lucide="calendar-days"></i>
+          <span>Campus Events</span>
+          <span class="nav-badge" id="nav-events-badge">0</span>
+        </button>
+        <button class="nav-item" data-page="notices">
+          <i data-lucide="bell"></i>
+          <span>Notice Board</span>
+          <span class="nav-badge" id="nav-notices-badge">0</span>
+        </button>
+        <button class="nav-item" data-page="lost">
+          <i data-lucide="search"></i>
+          <span>Lost & Found</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="profile-avatar" id="sidebar-avatar">S</div>
+        <div class="profile-info">
+          <strong id="profile-name">Student</strong>
+          <span id="profile-role">Campus Member</span>
+        </div>
+        <button id="settings-button" class="icon-button" type="button"
+          aria-label="Account settings" title="Account settings">
+          <i data-lucide="settings"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Account Settings Dropdown -->
+    <div id="settings-menu" class="settings-menu" hidden>
+      <div class="settings-header">
+        <div class="profile-avatar small" id="menu-avatar">S</div>
+        <div class="menu-user-details">
+          <strong id="settings-name">Student</strong>
+          <p id="settings-email">Signed in</p>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <button id="logout-button" type="button" class="danger-menu-btn">
+        <i data-lucide="log-out"></i>
+        <span>Sign out</span>
+      </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">YOUR CAMPUS, CONNECTED</span>
+          <h1 id="page-title">Student Dashboard</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="search-button" aria-label="Search" title="Search">
+            <i data-lucide="search"></i>
+          </button>
+          <button class="icon-button" id="notif-shortcut-button" aria-label="Notices" title="Notice Board">
+            <i data-lucide="bell"></i>
+          </button>
+          <div class="top-avatar" id="top-avatar" title="Account details">S</div>
+        </div>
+      </header>
+
+      <!-- PAGE: DASHBOARD -->
+      <section id="page-dashboard" class="page-view active">
+        <!-- Hero Welcome Card -->
+        <div class="welcome">
+          <div class="welcome-content">
+            <span class="welcome-tag">✦ YOUR STUDENT SPACE</span>
+            <h2 id="greeting">Welcome back, Student!</h2>
+            <p>Your college life, deadlines, and campus updates organized in one place.</p>
+            <div class="welcome-buttons">
+              <button class="primary-button" id="plan-button">
+                <i data-lucide="plus-circle"></i> Plan your day
+              </button>
+              <button class="secondary-button" id="quick-events-btn">
+                <i data-lucide="calendar"></i> Browse events
+              </button>
+            </div>
+          </div>
+          <div class="welcome-art" aria-hidden="true">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="art-symbol">✳</div>
+            <div class="floating-card">✦ Stay on track</div>
+          </div>
+        </div>
+
+        <!-- Section Heading -->
+        <div class="section-heading">
+          <div>
+            <h2>Your overview</h2>
+            <p>Everything you need for today at a glance.</p>
+          </div>
+          <span class="today-chip" id="today"></span>
+        </div>
+
+        <!-- Live Statistics Grid -->
+        <div class="stats-grid">
+          <article class="stat-card" data-navigate="tasks">
+            <div class="stat-icon purple"><i data-lucide="clock"></i></div>
+            <span>Pending tasks</span>
+            <strong id="pending-count">0</strong>
+            <small>Goals to accomplish</small>
+          </article>
+          <article class="stat-card" data-navigate="tasks">
+            <div class="stat-icon cyan"><i data-lucide="check-circle-2"></i></div>
+            <span>Tasks completed</span>
+            <strong id="completed-count">0</strong>
+            <small>Finished study goals</small>
+          </article>
+          <article class="stat-card" data-navigate="events">
+            <div class="stat-icon orange"><i data-lucide="calendar"></i></div>
+            <span>Campus events</span>
+            <strong id="events-count">0</strong>
+            <small>Happening on campus</small>
+          </article>
+          <article class="stat-card" data-navigate="notices">
+            <div class="stat-icon pink"><i data-lucide="megaphone"></i></div>
+            <span>Announcements</span>
+            <strong id="notices-count">0</strong>
+            <small>Official circulars</small>
+          </article>
+        </div>
+
+        <!-- Content Split: Task Planner Preview + Notices Preview -->
+        <div class="content-grid">
+          <!-- Left: Study Planner Widget -->
+          <article class="panel task-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Study planner</h2>
+                <p>Your goals, one task at a time.</p>
+              </div>
+              <div class="panel-actions">
+                <button class="text-button" id="add-task-shortcut">+ Add task</button>
+                <button class="icon-link-btn" data-navigate="tasks" title="Open full planner">
+                  <i data-lucide="arrow-up-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Task Quick Add Form -->
+            <form id="dashboard-task-form" class="task-form" hidden>
+              <input id="dashboard-task-input" placeholder="What do you need to do?" maxlength="120" required />
+              <button class="primary-button" type="submit">Add</button>
+              <button class="secondary-button" id="cancel-dash-task-btn" type="button">Cancel</button>
+            </form>
+
+            <div id="dashboard-task-list" class="task-list">
+              <p class="empty-state">Loading your tasks...</p>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="progress-section">
+              <div class="progress-label">
+                <span>Daily completion rate</span>
+                <strong id="progress-text">0%</strong>
+              </div>
+              <div class="progress-track">
+                <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Right: Campus Updates Preview -->
+          <article class="panel notice-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Campus updates</h2>
+                <p>Latest announcements from authorities.</p>
+              </div>
+              <button class="icon-link-btn" data-navigate="notices" title="View all notices">
+                <i data-lucide="arrow-up-right"></i>
+              </button>
+            </div>
+            <div id="dashboard-notice-list" class="notice-list-container">
+              <p class="empty-state">Loading campus announcements...</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- Campus Events Preview Section -->
+        <section class="panel events-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Featured Campus Events</h2>
+              <p>Discover workshops, club activities, and seminars.</p>
+            </div>
+            <button class="text-button" data-navigate="events">Explore all events &rarr;</button>
+          </div>
+          <div id="dashboard-event-grid" class="event-grid">
+            <p class="empty-state">Loading campus events...</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- PAGE: STUDY PLANNER (DEDICATED) -->
+      <section id="page-tasks" class="page-view" hidden>
+        <div class="page-header-row">
+          <div>
+            <h2>Study Planner</h2>
+            <p>Manage your daily study targets, deadlines, and learning schedule.</p>
+          </div>
+          <button class="primary-button" id="open-planner-form-btn">
+            <i data-lucide="plus"></i> Add New Task
+          </button>
+        </div>
+
+        <!-- Planner Progress Card -->
+        <div class="planner-stats-card">
+          <div class="planner-progress-info">
+            <span class="eyebrow">YOUR PROGRESS</span>
+            <div class="planner-percentage" id="planner-percentage-display">0%</div>
+            <p id="planner-status-summary">0 of 0 tasks completed</p>
+          </div>
+          <div class="planner-progress-bar-container">
+            <div class="progress-track large">
+              <div id="planner-progress-bar" class="progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="planner-badge-group">
+            <div class="pill-badge pill-purple">
+              <span id="planner-pending-badge">0</span> Pending
+            </div>
+            <div class="pill-badge pill-cyan">
+              <span id="planner-completed-badge">0</span> Completed
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Task Form Container -->
+        <div id="planner-form-container" class="panel form-panel" hidden>
+          <div class="panel-heading">
+            <h3>Add a Study Goal</h3>
+            <button class="icon-button small-btn" id="close-planner-form-btn" type="button" title="Close">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <form id="task-form" class="modern-form">
+            <div class="form-row">
+              <input id="task-input" class="form-input" placeholder="e.g. Complete OS Chapter 3 notes & revision" maxlength="150" required />
+              <button class="primary-button" type="submit">
+                <i data-lucide="plus"></i> Save Task
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Filters & Search Toolbar -->
+        <div class="toolbar">
+          <div class="filter-tabs" id="task-filter-tabs">
+            <button class="filter-btn active" data-filter="all">All Tasks</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+          </div>
+          <div class="search-input-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="task-search-input" placeholder="Search tasks..." />
+          </div>
+        </div>
+
+        <!-- Full Task List -->
+        <div id="task-list" class="task-list dedicated-task-list">
+          <p class="empty-state">Loading your study tasks...</p>
+        </div>
+      </section>
+
+      <!-- PAGE: CAMPUS EVENTS (DEDICATED) -->
+      <section id="page-events" class="page-view" hidden>
+        <div class="page-header-row">
+          <div>
+            <h2>Campus Events & Activities</h2>
+            <p>Stay up to date with fests, technical hackathons, guest lectures, and sports meets.</p>
+          </div>
+          <div class="search-input-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="event-search-input" placeholder="Search events..." />
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filter-tabs" id="event-filter-tabs">
+          <button class="filter-btn active" data-event-filter="all">All Events</button>
+          <button class="filter-btn" data-event-filter="academic">Academic</button>
+          <button class="filter-btn" data-event-filter="tech">Tech & Hackathons</button>
+          <button class="filter-btn" data-event-filter="cultural">Cultural</button>
+          <button class="filter-btn" data-event-filter="sports">Sports</button>
+        </div>
+
+        <!-- Dedicated Events Grid -->
+        <div id="event-grid" class="event-grid full-grid">
+          <p class="empty-state">Loading campus events from Firestore...</p>
+        </div>
+      </section>
+
+      <!-- PAGE: NOTICE BOARD (DEDICATED) -->
+      <section id="page-notices" class="page-view" hidden>
+        <div class="page-header-row">
+          <div>
+            <h2>Official Notice Board</h2>
+            <p>Real-time campus announcements, exam notifications, and circulars.</p>
+          </div>
+          <div class="search-input-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="notice-search-input" placeholder="Search announcements..." />
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filter-tabs" id="notice-filter-tabs">
+          <button class="filter-btn active" data-notice-filter="all">All Notices</button>
+          <button class="filter-btn" data-notice-filter="academic">Academic</button>
+          <button class="filter-btn" data-notice-filter="exam">Examinations</button>
+          <button class="filter-btn" data-notice-filter="admin">Administrative</button>
+        </div>
+
+        <!-- Dedicated Notices List -->
+        <div id="notice-page-list" class="notice-cards-list">
+          <p class="empty-state">Loading announcements from Firestore...</p>
+        </div>
+      </section>
+
+      <!-- PAGE: LOST & FOUND (DEDICATED) -->
+      <section id="page-lost" class="page-view" hidden>
+        <div class="page-header-row">
+          <div>
+            <h2>Lost & Found Hub</h2>
+            <p>Report misplaced possessions or help classmates recover what they lost on campus.</p>
+          </div>
+          <button class="primary-button" id="open-lost-form-btn">
+            <i data-lucide="plus"></i> Report Item
+          </button>
+        </div>
+
+        <!-- Lost & Found Post Form Panel -->
+        <div id="lost-form-panel" class="panel form-panel" hidden>
+          <div class="panel-heading">
+            <div>
+              <h3>Report a Lost or Found Item</h3>
+              <p>Fill in the item details clearly to ensure a speedy reunion.</p>
+            </div>
+            <button class="icon-button small-btn" id="close-lost-form-btn" type="button" title="Close">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+
+          <form id="lost-form" class="modern-form-grid">
+            <div class="form-group">
+              <label for="item-title">Item Name <span class="req">*</span></label>
+              <input id="item-title" class="form-input" type="text"
+                     placeholder="e.g. Navy Blue HydroFlask or Scientific Calculator" maxlength="100" required />
+            </div>
+
+            <div class="form-group">
+              <label for="item-type">Report Type <span class="req">*</span></label>
+              <select id="item-type" class="form-select" required>
+                <option value="Lost">I Lost Something (Looking for it)</option>
+                <option value="Found">I Found Something (In my custody)</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="item-location">Last Seen / Found Location <span class="req">*</span></label>
+              <input id="item-location" class="form-input" type="text"
+                     placeholder="e.g. Central Library 2nd Floor reading area" maxlength="120" required />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="item-description">Description & Contact Info <span class="req">*</span></label>
+              <textarea id="item-description" class="form-textarea" rows="3"
+                        placeholder="Describe distinctive marks, colors, and the best way to contact you (e.g. College Email, Telegram handle, or Hostel Room)"
+                        maxlength="400" required></textarea>
+            </div>
+
+            <div class="form-actions full-width">
+              <button type="submit" class="primary-button" id="lost-submit-btn">
+                <i data-lucide="send"></i> Post Item
+              </button>
+              <button type="button" class="secondary-button" id="cancel-lost-form-btn">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="toolbar">
+          <div class="filter-tabs" id="lost-filter-tabs">
+            <button class="filter-btn active" data-lost-filter="all">All Items</button>
+            <button class="filter-btn" data-lost-filter="Lost">Lost Items</button>
+            <button class="filter-btn" data-lost-filter="Found">Found Items</button>
+          </div>
+          <div class="search-input-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="lost-search-input" placeholder="Search item or location..." />
+          </div>
+        </div>
+
+        <!-- Real-Time Items Grid -->
+        <div id="lost-list" class="lost-grid">
+          <p class="empty-state">Loading reported items in real time...</p>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <span>CampusOS &bull; Designed for students, built for collaboration.</span>
+        <span>Version 2.0 &bull; © 2026</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- AUTH SCREEN (REGISTER & SIGN IN MODAL) -->
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand auth-brand">
+        <span class="brand-icon">
+          <i data-lucide="compass"></i>
+        </span>
+        <span>Campus<span class="accent">OS</span></span>
+      </div>
+
+      <p class="eyebrow">YOUR CAMPUS, CONNECTED</p>
+      <h1 id="auth-title">Welcome back!</h1>
+      <p id="auth-description" class="auth-description">
+        Sign in to access your dashboard, study planner, notices, and campus hub.
+      </p>
+
+      <form id="auth-form">
+        <div id="name-field" hidden>
+          <label for="auth-name">Full Name</label>
+          <input id="auth-name" type="text" maxlength="80"
+            placeholder="e.g. Alex Morgan" autocomplete="name" />
+        </div>
+
+        <div>
+          <label for="auth-email">College Email</label>
+          <input id="auth-email" type="email" placeholder="student@college.edu"
+            autocomplete="email" required />
+        </div>
+
+        <div>
+          <label for="auth-password">Password</label>
+          <input id="auth-password" type="password" minlength="6"
+            placeholder="At least 6 characters"
+            autocomplete="current-password" required />
+        </div>
+
+        <p id="auth-error" class="auth-error" role="alert"></p>
+
+        <button id="auth-submit" class="primary-button auth-submit" type="submit">
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <p class="auth-switch">
+        <span id="auth-switch-text">New to CampusOS?</span>
+        <button id="auth-toggle" class="text-button" type="button">
+          Create an account
+        </button>
+      </p>
+    </div>
+  </section>
+
+  <!-- Global Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Module Script -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

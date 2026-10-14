@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for auth verification
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // 1. Study Planner: Each student can only read, create, update, and delete their own tasks.
+    match /users/{userId}/tasks/{taskId} {
+      allow read, delete: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200;
+
+      allow update: if isOwner(userId)
+        && (request.resource.data.title is string || !('title' in request.resource.data))
+        && (request.resource.data.done is bool || !('done' in request.resource.data));
+    }
+
+    // 2. Campus Events: Signed-in students can read campus events.
+    // Client-side writes are disabled (managed by campus administrators).
+    match /events/{eventId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 3. Notice Board: Signed-in students can read announcements.
+    // Client-side writes are disabled (managed by campus administrators).
+    match /notices/{noticeId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 4. Lost & Found:
+    // Signed-in students can view all reported items.
+    // Any signed-in student can create an item with their authenticated UID.
+    // Students can update or delete only their own posts.
+    match /lostItems/{itemId} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 150
+        && request.resource.data.type in ['Lost', 'Found']
+        && request.resource.data.location is string
+        && request.resource.data.description is string;
+
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId;
+
+      allow delete: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+    }
+
+  }
+}
